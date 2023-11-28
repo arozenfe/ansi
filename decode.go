@@ -98,8 +98,11 @@ func Decode(in []byte) (out []byte, s *S, err error) {
 
 	// If the first byte is not an ESC or C1 code then return everything
 	// up to the first ESC or C1 code.
+	if in[0] < 14 {
+		return in[1:], &S{Code: Name(in[:1])}, nil
+	}
 	for x, c := range in {
-		if c == '\033' || (c&0xe0 == 0x80) {
+		if c == '\033' || c < 14 {
 			if x > 0 {
 				return in[x:], &S{Code: Name(in[:x])}, nil
 			}
